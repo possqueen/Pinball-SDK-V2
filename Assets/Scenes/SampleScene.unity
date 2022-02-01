@@ -4239,8 +4239,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   InAirHandling: 0.4
-  RollingMultiplier: 0
-  RollingDrag: 0
+  RunningDrag: 0.8
+  RollingDrag: 7
+  Crouching: 0
   BrakeForce: 25
   AirDrag: 0.2
   MinStickSpeed: 15
@@ -4323,8 +4324,9 @@ MonoBehaviour:
   actions: {fileID: 0}
   input: {fileID: 0}
   StateIndex: 0
+  RollingStateIndex: 0
   CanDash: 0
-  ToggleRoll: 0
+  ToggleRoll: 1
   RollingStartSpeed: 5
 --- !u!114 &703318139
 MonoBehaviour:
@@ -10004,7 +10006,7 @@ MonoBehaviour:
     GamepadInput: joystick button 0
     KeyboardInput: down
   - Name: Roll
-    GamepadInput: joystick button 5
+    GamepadInput: joystick button 2
     KeyboardInput: left ctrl
   - Name: Action
     GamepadInput: joystick button 1

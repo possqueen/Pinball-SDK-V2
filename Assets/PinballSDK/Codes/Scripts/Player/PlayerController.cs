@@ -50,8 +50,9 @@ public class PlayerController : MonoBehaviour
     public float Handling;
     [Tooltip("Multiplier added to handling, based on percentage of Max Speed (0-1).")] public AnimationCurve HandlingOverSpeed;
     [Tooltip("Multiplier added to handling while in air")][Range(0, 1)] public float InAirHandling;
-    [Tooltip("Multiplier added to slope gravity while rolling")] public float RollingMultiplier;
+    [Tooltip("Drag applied to slope force while running. This is not applied when rolling.")] public float RunningDrag;
     [Tooltip("Drag added while rolling on flat surfaces")] public float RollingDrag;
+    [HideInInspector] public bool Crouching;
     public float BrakeForce;
     public float AirDrag;
 
@@ -202,8 +203,14 @@ public class PlayerController : MonoBehaviour
             {
                 if (GroundAngle <= 15f)
                 {
-                    float decelRate = Mathf.Lerp(MinDecelRate, MaxDecelRate, DecelRateOverSpeed.Evaluate(Speed / MaxSpeed));
-                    if (MoveVector.magnitude > 0.5f) MoveVector = Vector3.MoveTowards(MoveVector, Vector3.zero, decelRate * Time.fixedDeltaTime);
+                    if (!Crouching)
+                    {
+                        float decelRate = Mathf.Lerp(MinDecelRate, MaxDecelRate, DecelRateOverSpeed.Evaluate(Speed / MaxSpeed));
+                        if (MoveVector.magnitude > 0.5f) MoveVector = Vector3.MoveTowards(MoveVector, Vector3.zero, decelRate * Time.fixedDeltaTime);
+                    } else
+                    {
+                        MoveVector = Vector3.MoveTowards(MoveVector, Vector3.zero, RollingDrag * Time.fixedDeltaTime);
+                    }
                     if (MoveVector.magnitude < 0.5f) MoveVector = Vector3.zero;
                 } else
                 {
@@ -407,6 +414,7 @@ public class PlayerController : MonoBehaviour
         {
             //Basic slope force
             Vector3 SlopeForce = Vector3.ProjectOnPlane(SlopeGravity, GroundNormal);
+            if (!Crouching) SlopeForce *= RunningDrag;
             Velocity += SlopeForce * (Uphill ? slopeMod : slopeDot) * Time.fixedDeltaTime;
         }
 
